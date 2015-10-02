@@ -1,0 +1,107 @@
+###############################
+1) On the Origin of Species
+###############################
+Reviews: head, tail, wc, grep
+###############################
+Difficulty: easy
+###############################
+
+The file ../data/OnTheOriginOfSpecies.txt contains the text of the first edition of Darwin's masterpiece. 
+
+a) The actual text starts with "INTRODUCTION." followed by a blank line and "When on board H.M.S. 'Beagle,' as naturalist, I was much struck", etc. The text ends immediately before the line "INDEX.". Without opening the file, extract the text in between the introduction and the index, and save it in the file OTOS.txt
+
+b) Count the occurrences of "evolution" or "evolved", appearing as full words and ignoring case.
+
+c) Count the occurrences of "Wallace" and "natural selection".
+
+###############################
+2) Hopkins papers
+###############################
+Reviews: cut, grep, sort
+###############################
+Difficulty: easy/medium
+###############################
+
+The file ../data/Hopkins_papers_2012-14.csv is a ;-separated file with data on 281 papers which contain "Hopkins Marine Station" in the affiliation. The data is taken from scopus.com
+
+a) Which one of these jounrals is more represented "Ecology Letters", "Nature", or "PLoS ONE"?
+
+b) Where was the most cited paper of 2012 published? 
+
+c) What is the maximum number of authors in a 2013 article?
+
+###############################
+3) Hormomes in baboons
+###############################
+Reviews: cut, grep, sort
+###############################
+Difficulty: easy/medium
+###############################
+
+Gesquiere et al. (2011) studied hormone levels in the blood of baboons. Every individual was recorded several times. 
+
+a) How often did the individual with the ID 3 and ID 27 need to give blood? 
+
+b) Write a script that can be executed from the command line and accepts the data file and ID as parameters.
+
+c) [optional, difficult] Search the internet on how to construct for loops in bash and write a loop that returns the number of replicates for each ID.
+
+###############################
+4) Size of networks
+###############################
+Reviews: wc, tr
+###############################
+Difficulty: medium/hard
+###############################
+
+Saavedra and Stouffer (2013) used many bipartite matrices for their paper. The matrices are stored in the directory ../data/Saavedra
+
+a) Write a script that takes one of these files and determines the number of rows (plants) and columns (pollinators). Note that columns are separated by spaces, that a space is at the end of each line, and that the line terminator in UNIX is '\n'. For example:
+$ bash netsize.sh ../data/Saavedra_2013/n1.txt 
+Filename:
+../data/Saavedra_2013/n1.txt
+Number of rows:
+97
+Number of columns:
+80
+
+b) [difficult, requires some Googling] Write a script that prints the size of each network:
+$ bash netsize_all.sh 
+../data/Saavedra_2013/n10.txt 14 20
+../data/Saavedra_2013/n11.txt 270 91
+../data/Saavedra_2013/n12.txt 7 72
+../data/Saavedra_2013/n13.txt 61 17
+...
+
+c) Which is the network with the largest number of rows? Which the one with the largest number of columns?
+
+###############################
+5) Data explorer
+###############################
+Reviews: head, tail, cut, sort
+###############################
+Difficulty: medium/hard
+###############################
+
+Write a sh script that, for a given csv file and column number, prints:
+- The corresponding column name
+- The number of distinct values in the column
+- The minimum value
+- The maximum value
+- [optional, and difficult] The median value or the mean
+
+Use ../data/Buzzard2015_data.csv for testing. 
+For example, running 
+$ bash explore.sh ../data/Buzzard2015_data.csv 7
+
+Should return
+Column name:
+biomass
+Number of distinct values:
+285
+Minimum value:
+1.048466198
+Maximum value:
+14897.29471
+
+

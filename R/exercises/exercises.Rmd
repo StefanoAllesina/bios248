@@ -1,0 +1,184 @@
+## Self-incompatibility
+> **Reviews:** Reading data, data frames, basic operations, string manipulation
+>
+> **Difficulty:** Easy
+
+The file `R/data/Goldberg_2010.csv` contains the data from the paper by Goldberg et al. (Science 2010). In the csv file there is a list of 356 plant species and a Status describing whether the species is self-incompatible (0), self-compatible (1) or more complex situations (2-5).
+
+- Write a program that counts how many species are in each category of Status. The output should be a dataframe, like
+```
+  Status count
+1      0   116
+2      1   196
+3      2    17
+4      3     1
+5      4    25
+6      5     1
+```
+
+- Write another program that builds a table specifying how many species are in each Status for each genus (note that genus and species name are separated by an underscore in the first column).
+
+## Food webs in space
+> **Reviews:** Reading data, data frames
+>
+> **Difficulty:** Easy
+
+The file `R/data/Wood_2015_data.csv` contains the feeding relationships (i.e., consumer-resource pairs) for the marine intertidal ecosystem of the Sanak Archipelago in the Eastern Aleutian Islands, Alaska, studied by Wood and colleagues (Ecology and Evolution, 2015). The file documents 388 food webs, each sampled in either a Quadrat (Q), a Transect (T), a Site (S), a Locale (L), or at the level of the whole archipelago.
+
+For each level of spatial organization (Q, T, S, L), find a) what is the number of webs contained in the database; b) what is the mean number of species (i.e., pooling consumers and resources) found at that level; c) what is the mean number of connections (i.e., feeding interactions).
+
+The output should look something like this (for each spatial level):
+```
+Spatial level: L
+Average num_connections = 618.75
+Average num_species = 67.0
+Total number of webs at this level: 4
+```
+
+Things to notice: the first column (`WebID`) contains a unique identifier for each of the 388 webs. One way to go about solving this problem is to write a function that takes the `WebID`, subsets the data to match the `WebID`, and computes the number of species and number of connections for that particular web. 
+
+## Reindeer in Norway
+> **Reviews:** Subsetting data, converting dates, basic operations
+>
+> **Difficulty:** Medium
+
+Cagnacci and colleagues (J Anim Ecology, 2015) provide data describing the individual movement of reindeers in Norway. The data is contained in `R/data/Cagnacci_2015.csv`. Read the data, and extract the points from 2007-04-17 to 2007-04-21. Note the peculiar date format of `acquisition_time`. To convert into a date, use `as.Date`, after reading the documentation of the function. For each individual (`original_animal_id`), calculate the distance between the starting and the end points,  using the coordinates `utm_x` and `utm_y`.
+
+## Do shorter titles lead to more citations?
+> **Reviews:** Reading data, data frames, basic statistics in R, functions
+>
+> **Difficulty:** Medium
+
+Adrian Letchford and colleagues (Roy Soc Open Science, 2015) found an interesting pattern: papers that have shorter titles tend to fare better in terms of citations.
+
+They took top-cited papers from a variety of journals, and ranked them by title length (in number of characters), and number citations received (as of November 2014). Then they performed a Kendall's tau test to see whether these rankings are correlated. A negative correlation would mean that the articles with longer titles tend to be ranked low for citations.
+
+The file `R/data/Letchford_2015_data.csv` contains the data needed to replicate their results.
+
+- Write a program that performs the test described above using all the papers published in 2010. The program should do the following: 1) read the data; 2) extract all the papers published in 2010; 3) rank the articles by citations, and by title length; 4) compute the Kendall's tau expressing the correlation between the two rankings. For this dataset, the Authors get a tau of about -0.07 with a significant p-value.
+
+- Write a function that repeats the analysis for a particular journal-year combination. Try to run the function for the top scientific publications *Nature* and *Science*, and for the top medical journals *The Lancet* and *New Eng J Med*, for all years in the data (2007-2013). Do you always find a negative, significant correlation (i.e., negative tau with low p-value)?
+
+Points to consider: a) you need to perform Kendall's tau test. Fortunately, `R` has a function to do that: `cor(mydata, method="kendall", use="pairwise")`, where `mydata` is a dataframe containing the two rankings. To produce the rankings, look at the function `order`. b) As for the second question, if we were to test several journals, we would need to account for multiple testing (i.e., even if there was no effect of title length on
+citations, we would expect 5% of the tests to return "significant"" results).
+
+## Simulating genetic drift
+> **Reviews:** Random numbers, functions
+>
+> **Difficulty:** Medium/Hard
+
+Take a simple model for genetic drift: there are `N` individuals, each with two chromosomes. For simplicity, we are going to model only one gene, with two alleles: `A` or `a`. These alleles are neutral (they do not confer a fitness differential). At each generation, the individuals mate sexually, and then die. The population is constant, and each offspring is produced by the random mating of two parents, inheriting one chromosome for each. There are no mutations.
+
+Write a simulation for this simple problem. Initially, the frequency of allele `A` in the population is `p`, and that of allele `a` is `1-p`. After a number of generation, one of the alleles should go to fixation (i.e., all the individuals in the population are `AA`, or all individuals are `Aa`). Your simulation should take `N` and `p` as parameters, and run until fixation. It should output the frequency of `AA`, `aa`, `Aa` and `aA` every 100 generations, and at the end of the simulation print how long did it take to reach fixation, and which allele won the race.
+
+
+## Bifurcations in yeast
+> **Reviews:** Working with multiple files, strings, functions
+>
+> **Difficulty:** Medium
+
+In a recent paper, Dai et. al (Science, 2012) were able to experimentally construct a bistable system for yeast. Bistable means that, depending on initial conditions, the population reaches different endpoints. In this case, the yeast population can either reach a steady state, or go extinct. To probe bistability, they conducted experiments where yeast is grown for 23 hrs in a given medium, and then is diluted into fresh medium. Each experiment is carried out for 7 days, and conducted for 8 replicates. The dilution imposes a mortality rate on the yeast. Dai et. al showed that the dilution factors determines the location of the "bifurcation", i.e., the population density above which yeast grows, and below which it goes extinct.
+
+The data is in your `R/data/Dai_2012` directory. Your goal is to write a program that prints the 8 replicated time series for the yeast population for a given dilution factor and initial conditions. There are 11 initial conditions (in the files, these are the 11 columns, with highest densities in the first column).
+
+Your program should accept two parameters: `dilution`, and `column`. For each choice (i.e., dilution = 250, 500, etc., and column between 1 and 11), the program should, for each day, open the right file, extract the relevant column (it should contain 8 values), and organize the time-series in a data frame. For example:
+
+```
+> readDai(1600,1)
+          Rep 1     Rep 2     Rep 3     Rep 4     Rep 5     Rep 6     Rep 7     Rep 8
+Day 1 1.8972048 1.9691202 2.0973898 2.0853644 2.1094917 2.0585824 2.0409353 1.9355899
+Day 2 0.8906084 0.9440874 0.9034355 0.8874151 0.9131129 0.8573437 0.8401490 0.9358872
+Day 3 0.5965810 0.8589146 0.9991154 0.8746954 0.9114966 0.9066558 0.8938071 0.8970111
+Day 4 0.5924789 0.7819187 0.9050449 0.8154131 0.9391630 0.8874151 0.8762807 0.9424445
+Day 5 0.5214300 0.6791115 0.7342299 0.7773966 1.0592742 0.6963452 0.7638948 0.8810446
+Day 6 0.5174867 0.8016394 0.7430808 0.8858205 1.0874229 0.8778674 0.8184875 0.9755753
+Day 7 0.3979024 0.6748274 0.6862732 0.8589146 0.9572819 0.8510731 0.7864515 0.9523232
+```
+
+## Just for fun
+We are going to extract data from pubmed using a publicly available `R` package hosted on GitHub. This will also show how useful it is to organize your code in packages, and make them freely available. To install packages from GitHub, you first need to install the library `devtools`. Let's install also the library `XML` in case you don't have it already.
+
+```
+> install.packages("devtools")
+> install.package("XML")
+```
+Once installed, install the package `rentrez` from GitHub:
+```
+> library(devtools)
+> install_github("ropensci/rentrez")
+```
+and load the libraries
+```{r}
+library(XML)
+library(rentrez)
+```
+
+This gives you access to a lot of databases from NCBI:
+```{r}
+entrez_dbs()
+```
+
+To see what can we use to search PubMed, type:
+```{r}
+entrez_db_searchable(db = "pubmed")
+```
+
+Let's give it a try. For example, let's search which papers of mine are available on PubMed. First, we are going to fetch the ids for the resources available on PubMed:
+```{r}
+stefanoids <- entrez_search(db = "pubmed", term = "Allesina S[AUTH]", retmax = 1000) # if you don't specify retmax, it will return only 20
+stefanoids
+```
+
+Then, we are going to fetch these records. The function can return output in XML. We are going to translate this into a list of lists for easier access:
+```{r}
+stefanoxml <- entrez_fetch(db = "pubmed", id = stefanoids$ids, rettype = "xml")
+stefanolist <- xmlToList(xmlParse(stefanoxml))
+```
+Now the list contains one sublist for each of the publications. For example, the abstract of the first publication is stored in:
+```{r}
+stefanolist[[1]]$MedlineCitation$Article$Abstract
+```
+Let's print where the articles where published:
+```{r}
+for (i in 1:length(stefanolist)){
+  print(stefanolist[[i]]$MedlineCitation$Article$Journal$Title)
+}
+```
+
+Now, finally, the exercise:
+- Write a program that, for a given author, specified by the user, fetches all the abstracts and titles of all the papers, along with the year of publication. 
+- The program plots the data, to see whether abstract tend and titles tend to get longer (shorter) with time for a given author.
+
+For example, for my papers there's no real trend:
+```
+    Year mean(CharsInAbstract)
+   (dbl)                 (dbl)
+1   2004              1052.500
+2   2006              1473.000
+3   2007              1214.000
+4   2008               702.750
+5   2009              1311.500
+6   2010              1331.500
+7   2011               984.250
+8   2012              1466.000
+9   2013              1056.000
+10  2014              1190.000
+11  2015              1157.667
+```
+
+While Giulio's abstracts (search term: `De Leo GA`) tend to get longer:
+```
+    Year mean(CharsInAbstract)
+   (dbl)                 (dbl)
+1   1996              1074.000
+2   2001               574.000
+3   2007              1238.000
+4   2008              1618.667
+5   2010              1150.333
+6   2011              1548.750
+7   2012              1403.000
+8   2013              1748.000
+9   2014              1612.000
+10  2015              1721.250
+```
+
