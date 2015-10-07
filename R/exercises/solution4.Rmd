@@ -20,8 +20,8 @@ head(l2015)
 Now extract those published in 2010
 ```{r}
 papers_2010 <- subset(l2015, l2015$year == 2010)
-papers_2010$titlerank <- order(papers_2010$title_length)
-papers_2010$citesrank <- order(papers_2010$cites)
+papers_2010$titlerank <- rank(papers_2010$title_length)
+papers_2010$citesrank <- rank(papers_2010$cites)
 ```
 
 The Kendall's tau should be about -0.07
@@ -35,8 +35,8 @@ cor(papers_2010$titlerank, papers_2010$citesrank, method = "kendall")
 ```{r}
 get_tau_jrn_year <- function(data, jrn, yr){
   jrn_yr <- subset(data, data$year == yr & data$journal == jrn)
-  jrn_yr$titlerank <- order(jrn_yr$title_length)
-  jrn_yr$citesrank <- order(jrn_yr$cites)
+  jrn_yr$titlerank <- rank(jrn_yr$title_length)
+  jrn_yr$citesrank <- rank(jrn_yr$cites)
   return(cor(jrn_yr$titlerank, jrn_yr$citesrank))
 }
 ```

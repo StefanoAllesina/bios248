@@ -85,18 +85,18 @@ head(l2015)</code></pre>
 ## 6 2007 American Journal of Human Genetics           84  5651</code></pre>
 <p>Now extract those published in 2010</p>
 <pre class="r"><code>papers_2010 &lt;- subset(l2015, l2015$year == 2010)
-papers_2010$titlerank &lt;- order(papers_2010$title_length)
-papers_2010$citesrank &lt;- order(papers_2010$cites)</code></pre>
+papers_2010$titlerank &lt;- rank(papers_2010$title_length)
+papers_2010$citesrank &lt;- rank(papers_2010$cites)</code></pre>
 <p>The Kendall’s tau should be about -0.07</p>
 <pre class="r"><code>cor(papers_2010$titlerank, papers_2010$citesrank, method = &quot;kendall&quot;)</code></pre>
-<pre><code>## [1] -0.06851243</code></pre>
+<pre><code>## [1] -0.06551962</code></pre>
 <ul>
 <li>Write a function that repeats the analysis for a particular journal-year combination. Try to run the function for the top scientific publications <em>Nature</em> and <em>Science</em>, and for the top medical journals <em>The Lancet</em> and <em>New Eng J Med</em>, for all years in the data (2007-2013). Do you always find a negative, significant correlation (i.e., negative tau with low p-value)?</li>
 </ul>
 <pre class="r"><code>get_tau_jrn_year &lt;- function(data, jrn, yr){
   jrn_yr &lt;- subset(data, data$year == yr &amp; data$journal == jrn)
-  jrn_yr$titlerank &lt;- order(jrn_yr$title_length)
-  jrn_yr$citesrank &lt;- order(jrn_yr$cites)
+  jrn_yr$titlerank &lt;- rank(jrn_yr$title_length)
+  jrn_yr$citesrank &lt;- rank(jrn_yr$cites)
   return(cor(jrn_yr$titlerank, jrn_yr$citesrank))
 }</code></pre>
 <p>Now we can try all the journals and years</p>
@@ -105,34 +105,34 @@ papers_2010$citesrank &lt;- order(papers_2010$cites)</code></pre>
    print(paste(jr, yr, get_tau_jrn_year(l2015, jr, yr))) 
   }
 }</code></pre>
-<pre><code>## [1] &quot;Nature 2007 -0.00391558896006916&quot;
-## [1] &quot;Science 2007 -0.0513665944364203&quot;
+<pre><code>## [1] &quot;Nature 2007 0.0154089496669546&quot;
+## [1] &quot;Science 2007 -0.0340869427878935&quot;
 ## [1] &quot;The Lancet 2007 NA&quot;
-## [1] &quot;New Eng J Med 2007 0.104697743141679&quot;
-## [1] &quot;Nature 2008 -0.139727164999981&quot;
-## [1] &quot;Science 2008 -0.00471452585861862&quot;
-## [1] &quot;The Lancet 2008 0.220788064871674&quot;
-## [1] &quot;New Eng J Med 2008 0.15275565043587&quot;
-## [1] &quot;Nature 2009 -0.0386897870997914&quot;
-## [1] &quot;Science 2009 -0.0485120707417657&quot;
-## [1] &quot;The Lancet 2009 0.068848761041944&quot;
-## [1] &quot;New Eng J Med 2009 0.15429750075129&quot;
-## [1] &quot;Nature 2010 -0.0790523531788113&quot;
-## [1] &quot;Science 2010 -0.0673018885229864&quot;
-## [1] &quot;The Lancet 2010 0.163123526210775&quot;
-## [1] &quot;New Eng J Med 2010 0.0968919800043469&quot;
-## [1] &quot;Nature 2011 -0.0585665050749886&quot;
-## [1] &quot;Science 2011 0.0114421069535892&quot;
-## [1] &quot;The Lancet 2011 0.102168986116319&quot;
-## [1] &quot;New Eng J Med 2011 -0.0605050816637984&quot;
-## [1] &quot;Nature 2012 0.00179483869151891&quot;
-## [1] &quot;Science 2012 0.0178549143496262&quot;
-## [1] &quot;The Lancet 2012 0.143630824359492&quot;
-## [1] &quot;New Eng J Med 2012 0.17608215689559&quot;
-## [1] &quot;Nature 2013 -0.0671961954564007&quot;
-## [1] &quot;Science 2013 0.0209862719252145&quot;
-## [1] &quot;The Lancet 2013 0.211592071947012&quot;
-## [1] &quot;New Eng J Med 2013 -0.0347553771706938&quot;</code></pre>
+## [1] &quot;New Eng J Med 2007 0.128948668956609&quot;
+## [1] &quot;Nature 2008 -0.120781984235223&quot;
+## [1] &quot;Science 2008 0.0116087078299993&quot;
+## [1] &quot;The Lancet 2008 0.227415167457624&quot;
+## [1] &quot;New Eng J Med 2008 0.175020467901586&quot;
+## [1] &quot;Nature 2009 -0.0188665705200145&quot;
+## [1] &quot;Science 2009 -0.0323153272108902&quot;
+## [1] &quot;The Lancet 2009 0.0781311370581&quot;
+## [1] &quot;New Eng J Med 2009 0.184036043843304&quot;
+## [1] &quot;Nature 2010 -0.0565473398008463&quot;
+## [1] &quot;Science 2010 -0.0491387242968988&quot;
+## [1] &quot;The Lancet 2010 0.169948987478432&quot;
+## [1] &quot;New Eng J Med 2010 0.132372084842453&quot;
+## [1] &quot;Nature 2011 -0.0385299472029674&quot;
+## [1] &quot;Science 2011 0.0241152586191769&quot;
+## [1] &quot;The Lancet 2011 0.109991001655185&quot;
+## [1] &quot;New Eng J Med 2011 -0.030689769640305&quot;
+## [1] &quot;Nature 2012 0.0219930704182242&quot;
+## [1] &quot;Science 2012 0.0305101709254693&quot;
+## [1] &quot;The Lancet 2012 0.150073261356088&quot;
+## [1] &quot;New Eng J Med 2012 0.210282252136603&quot;
+## [1] &quot;Nature 2013 -0.047056150335325&quot;
+## [1] &quot;Science 2013 0.0371470029682512&quot;
+## [1] &quot;The Lancet 2013 0.214431815997623&quot;
+## [1] &quot;New Eng J Med 2013 0.00452356023446762&quot;</code></pre>
 </div>
 
 
