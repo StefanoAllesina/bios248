@@ -1,0 +1,62 @@
+## Self-incompatibility
+> **Reviews:** Reading data, data frames, basic operations, string manipulation
+>
+> **Difficulty:** Easy
+
+The file `R/data/Goldberg_2010.csv` contains the data from the paper by Goldberg et al. (Science 2010). In the csv file there is a list of 356 plant species and a Status describing whether the species is self-incompatible (0), self-compatible (1) or more complex situations (2-5).
+
+- Write a program that counts how many species are in each category of Status. The output should be a dataframe, like
+```
+  Status count
+1      0   116
+2      1   196
+3      2    17
+4      3     1
+5      4    25
+6      5     1
+```
+First, we need to read the data:
+```{r}
+g2010 <- read.table("../data/Golberg_2010.csv", sep = ",", header = TRUE, stringsAsFactors = FALSE)
+```
+
+The simplest solution is to use a for loop:
+```{r}
+# Determine the various Status and take only unique occurrences
+status_values <- sort(unique(g2010$Status))
+
+result <- data.frame()
+# For each status, count the species and build a dataframe
+for (st in status_values){
+  num_sp <- sum(g2010$Status == st)
+  result <- rbind(result, data.frame(Status = st, NumSpecies = num_sp))
+}
+
+print(result)
+```
+
+Alternatively, we can use the function `table`:
+
+```{r}
+tbl <- table(g2010$Status)
+result <- data.frame(Status = names(tbl), NumSpecies = as.numeric(tbl))
+print(result)
+```
+
+- Write another program that builds a table specifying how many species are in each Status for each genus (note that genus and species name are separated by an underscore in the first column).
+
+We need a `Genus` column, obtained by splitting the string with the latin binomial. We can use `strsplit` in conjunction with a for loop:
+
+```{r}
+g2010$Genus <- rep("", dim(g2010)[1]) # initialize empty
+for (i in 1:dim(g2010)[1]){
+  g2010$Genus[i] <- strsplit(g2010$Species[i], "_")[[1]][1]  
+}
+head(g2010)
+```
+
+Now use `table` to get the result in one line of code:
+```{r}
+table(g2010$Genus, g2010$Status)
+```
+

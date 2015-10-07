@@ -1,0 +1,48 @@
+## Bifurcations in yeast
+> **Reviews:** Working with multiple files, strings, functions
+>
+> **Difficulty:** Medium
+
+In a recent paper, Dai et. al (Science, 2012) were able to experimentally construct a bistable system for yeast. Bistable means that, depending on initial conditions, the population reaches different endpoints. In this case, the yeast population can either reach a steady state, or go extinct. To probe bistability, they conducted experiments where yeast is grown for 23 hrs in a given medium, and then is diluted into fresh medium. Each experiment is carried out for 7 days, and conducted for 8 replicates. The dilution imposes a mortality rate on the yeast. Dai et. al showed that the dilution factors determines the location of the "bifurcation", i.e., the population density above which yeast grows, and below which it goes extinct.
+
+The data is in your `R/data/Dai_2012` directory. Your goal is to write a program that prints the 8 replicated time series for the yeast population for a given dilution factor and initial conditions. There are 11 initial conditions (in the files, these are the 11 columns, with highest densities in the first column).
+
+Your program should accept two parameters: `dilution`, and `column`. For each choice (i.e., dilution = 250, 500, etc., and column between 1 and 11), the program should, for each day, open the right file, extract the relevant column (it should contain 8 values), and organize the time-series in a data frame. For example:
+
+```
+> readDai(1600,1)
+          Rep 1     Rep 2     Rep 3     Rep 4     Rep 5     Rep 6     Rep 7     Rep 8
+Day 1 1.8972048 1.9691202 2.0973898 2.0853644 2.1094917 2.0585824 2.0409353 1.9355899
+Day 2 0.8906084 0.9440874 0.9034355 0.8874151 0.9131129 0.8573437 0.8401490 0.9358872
+Day 3 0.5965810 0.8589146 0.9991154 0.8746954 0.9114966 0.9066558 0.8938071 0.8970111
+Day 4 0.5924789 0.7819187 0.9050449 0.8154131 0.9391630 0.8874151 0.8762807 0.9424445
+Day 5 0.5214300 0.6791115 0.7342299 0.7773966 1.0592742 0.6963452 0.7638948 0.8810446
+Day 6 0.5174867 0.8016394 0.7430808 0.8858205 1.0874229 0.8778674 0.8184875 0.9755753
+Day 7 0.3979024 0.6748274 0.6862732 0.8589146 0.9572819 0.8510731 0.7864515 0.9523232
+```
+
+Here's a possible function for solving this problem:
+```{r}
+readDai <- function(my_dilution, my_column){
+  # prepare a data frame filled with zeros
+  my_result <- as.data.frame(matrix(0, 7, 8))
+  # change column and row names (for making it prettier)
+  colnames(my_result) <- paste("Rep", 1:8)
+  rownames(my_result) <- paste("Day", 1:7)
+  # for each day
+  for (day in 1:7){
+    # read the right file
+    filename <- paste("../data/Dai_2012/dilution", my_dilution, "_day", day, ".txt", sep = "")
+    tbl <- read.table(filename, header = FALSE)
+    # put in the result table
+    my_result[day,] <- (tbl[,my_column])
+  }
+  return(my_result)
+}
+```
+
+For example:
+```{r}
+readDai(1600,1)
+```
+

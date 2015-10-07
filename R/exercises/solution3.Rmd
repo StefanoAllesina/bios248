@@ -1,0 +1,40 @@
+## Reindeer in Norway
+> **Reviews:** Subsetting data, converting dates, basic operations
+>
+> **Difficulty:** Medium
+
+Cagnacci and colleagues (J Anim Ecology, 2015) provide data describing the individual movement of reindeers in Norway. The data is contained in `R/data/Cagnacci_2015.csv`. Read the data, and extract the points from 2007-04-17 to 2007-04-21. Note the peculiar date format of `acquisition_time`. To convert into a date, use `as.Date`, after reading the documentation of the function. For each individual (`original_animal_id`), calculate the distance between the starting and the end points,  using the coordinates `utm_x` and `utm_y`.
+
+First, read the data:
+```{r}
+rd <- read.table("../data/Cagnacci_2015_data.csv", header = TRUE, stringsAsFactors = FALSE)
+head(rd)
+```
+
+Now, let's convert the date into something manageable, and add a column to the dataframe:
+```{r}
+rd$date <- as.Date(rd$acquisition_time, format = "%d%b%y")
+```
+
+Subset the data:
+```{r}
+rd_sub <- subset(rd, rd$date >= as.Date("2007-04-17") & rd$date <= as.Date("2007-04-21"))
+```
+
+For each individual, get the initial and final position, and calculate the distance traveled.
+
+```{r}
+individuals <- unique(rd_sub$original_animal_id)
+result <- data.frame()
+for (i in individuals){
+  ind_data <- subset(rd_sub, rd_sub$original_animal_id == i)
+  initialx <- ind_data$utm_x[1]
+  finalx <- ind_data$utm_x[dim(ind_data)[1]]
+  initialy <- ind_data$utm_y[1]
+  finaly <- ind_data$utm_y[dim(ind_data)[1]]
+  distance_traveled <- sqrt((initialx - finalx)^2 + (initialy - finaly)^2)
+  result <- rbind(result, data.frame(Individual = i, Distance = distance_traveled))
+}
+print(result)
+```
+

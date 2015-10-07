@@ -1,0 +1,58 @@
+## Food webs in space
+> **Reviews:** Reading data, data frames
+>
+> **Difficulty:** Easy
+
+The file `R/data/Wood_2015_data.csv` contains the feeding relationships (i.e., consumer-resource pairs) for the marine intertidal ecosystem of the Sanak Archipelago in the Eastern Aleutian Islands, Alaska, studied by Wood and colleagues (Ecology and Evolution, 2015). The file documents 388 food webs, each sampled in either a Quadrat (Q), a Transect (T), a Site (S), a Locale (L), or at the level of the whole archipelago.
+
+For each level of spatial organization (Q, T, S, L), find a) what is the number of webs contained in the database; b) what is the mean number of species (i.e., pooling consumers and resources) found at that level; c) what is the mean number of connections (i.e., feeding interactions).
+
+The output should look something like this (for each spatial level):
+```
+Spatial level: L
+Average num_connections = 618.75
+Average num_species = 67.0
+Total number of webs at this level: 4
+```
+
+Things to notice: the first column (`WebID`) contains a unique identifier for each of the 388 webs. One way to go about solving this problem is to write a function that takes the `WebID`, subsets the data to match the `WebID`, and computes the number of species and number of connections for that particular web. 
+
+First, read the data and get the labels for spatial levels:
+```{r}
+food_webs <- read.table("../data/Wood_2015_data.csv", stringsAsFactors = FALSE, sep = ",", header = TRUE)
+spatial_levels <- sort(unique(food_webs$WebScale))
+print(spatial_levels)
+```
+
+Now write a function that does the subsetting and printing:
+```{r}
+print_stats_spatial_level <- function(fw, sp_lev){
+  print(paste("Spatial level:", sp_lev))
+  # subset the data      
+  tmp <- subset(fw, fw$WebScale == sp_lev)
+  # count number of webs
+  num_webs <- length(unique(tmp$WebID))
+  # count number of connections
+  num_conn <- dim(tmp)[1]
+  print(paste("Average num_connections:", num_conn / num_webs))
+  # total number of species in each web -- we need a for loop
+  num_sp <- rep(0, num_webs)
+  my_webs <- unique(tmp$WebID)
+  for (i in 1:num_webs){
+    # num sp in the particular web
+    tmp2 <- subset(tmp, tmp$WebID == my_webs[i])
+    num_sp[i] <- length(unique(c(tmp2$PredTSN, tmp2$PreyTSN)))
+  }
+  print(paste("Average num_species:", mean(num_sp)))
+  print(paste("Total number of webs at this level:", num_webs))
+}
+```
+
+Now call the function on each spatial level:
+```{r}
+for (sp_lev in spatial_levels){
+  print_stats_spatial_level(food_webs, sp_lev)
+  print("") # Add a blank line for readability
+}
+```
+

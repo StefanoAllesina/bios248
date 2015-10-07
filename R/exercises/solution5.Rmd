@@ -1,0 +1,101 @@
+## Simulating genetic drift
+> **Reviews:** Random numbers, functions
+>
+> **Difficulty:** Medium/Hard
+
+Take a simple model for genetic drift: there are `N` individuals, each with two chromosomes. For simplicity, we are going to model only one gene, with two alleles: `A` or `a`. These alleles are neutral (they do not confer a fitness differential). At each generation, the individuals mate sexually, and then die. The population is constant, and each offspring is produced by the random mating of two parents, inheriting one chromosome for each. There are no mutations.
+
+Write a simulation for this simple problem. Initially, the frequency of allele `A` in the population is `p`, and that of allele `a` is `1-p`. After a number of generation, one of the alleles should go to fixation (i.e., all the individuals in the population are `AA`, or all individuals are `Aa`). Your simulation should take `N` and `p` as parameters, and run until fixation. It should output the frequency of `AA`, `aa`, `Aa` and `aA` every 100 generations, and at the end of the simulation print how long did it take to reach fixation, and which allele won the race.
+
+
+As discussed in class, let's write three functions. First, a function that builds the population:
+
+```{r}
+build_pop <- function(N, p){
+  # sample comes in handy: read the documentation for the optoion prob!
+  pop <- matrix(sample(c("A", "a"), N, replace = TRUE, prob = c(p, 1-p)), 2, N)
+  return(pop)
+}
+```
+
+A simple test
+```{r}
+my_pop <- build_pop(10, 0.1)
+```
+
+Now we need a function to check whether an allele went to fixation
+```{r}
+found_fixation <- function(pop){
+  # for simplicity, let's paste the two alleles
+  # so that we have a vector of "AA", "aA", "aa", etc.
+  genotypes <- paste(pop[1,], pop[2,], sep = "")
+  # pop size
+  N <- length(genotypes)
+  # if AA is fixed return true
+  if (sum(genotypes == "AA") == N){
+    return(TRUE)
+  }
+  # if aa is fixed return true
+  if (sum(genotypes == "aa") == N){
+    return(TRUE)
+  }
+  # otherwise, return FALSE
+  return(FALSE)
+}
+```
+
+Now, the slowest part: reproduction. This is where the program is spending most of its time. Any better way to do this?
+
+```{r}
+reproduce_pop <- function(pop){
+  # initialize
+  new_pop <- pop
+  N <- dim(pop)[2]
+  # get dads and moms
+  dads <- sample(1:N, N, replace = TRUE)
+  moms <- sample(1:N, N, replace = TRUE)
+  for (i in 1:N){
+    if (runif(1) < 0.5){
+      # chromosome 1 from mom; 2 from dad
+      new_pop[1, i] <- pop[1, moms[i]]
+      new_pop[2, i] <- pop[2, dads[i]]
+    } else {
+      # chromosome 2 from mom; 1 from dad
+      new_pop[2, i] <- pop[2, moms[i]]
+      new_pop[1, i] <- pop[1, dads[i]]      
+    }
+  }
+  return(new_pop)
+}
+```
+
+Finally, all together:
+```{r}
+simulate_population <- function(N, p){
+  generation <- 0
+  pop <- build_pop(N, p)
+  fixed <- found_fixation(pop)
+  while (fixed == FALSE){
+    # create a new generation
+    pop <- reproduce_pop(pop)
+    # update fixation
+    fixed <- found_fixation(pop)
+    # increment generation
+    generation <- generation + 1
+  }
+  # it went to fixation!
+  print(paste("Fixation happened at generation", generation))
+  return(generation)
+}
+```
+
+
+For example, this should go to fixation fast:
+```{r}
+simulate_population(500, 0.05)
+```
+
+While this should take much longer:
+```{r}
+simulate_population(500, 0.5)
+```
